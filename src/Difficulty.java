@@ -1,0 +1,14 @@
+//Abstract class for three levels of difficulty
+public abstract class Difficulty {
+    //The count of mice, milk and timer delay for each depends on the difficulty level.
+    protected int miceCount;
+    protected int milkCount;
+    protected int miceInterval;
+    protected int milkInterval;
+
+    //Accessor methods.
+    public int getMiceCount()    { return miceCount; }
+    public int getMilkCount()    { return milkCount; }
+    public int getMiceInterval() { return miceInterval; }
+    public int getMilkInterval() { return milkInterval; }
+}

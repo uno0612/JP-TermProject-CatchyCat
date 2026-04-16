@@ -1,184 +1,110 @@
 import java.awt.*;
-import java.awt.event.*;
-import java.util.Random;
 import javax.swing.*;
 
 public class MiceHunt {
-    int boardWidth = 600;
-    int boardHeight = 650; //50 for the text panel on top
-    int tileSize = 36; //will change depending on difficulty
+    //Main window dimensions.
+    private static final int BOARD_WIDTH  = 600;
+    private static final int BOARD_HEIGHT = 650;
 
-    JFrame frame = new JFrame("Project: Mice Hunt");
-    
-	JPanel startPanel = new JPanel(); //a start panel (User interface)
-    JButton startButton = new JButton("Start"); //interactive start button
-    JLabel titleLabel = new JLabel(); //title label
-
-
-    JLabel textLabel = new JLabel();
-    JPanel textPanel = new JPanel(); //the text panel
-    JPanel boardPanel = new JPanel();  //the board panel
-
-    JButton[] board = new JButton[tileSize];
-    ImageIcon miceIcon;
-    ImageIcon milkIcon;
-
-    JButton currMiceTile;
-    JButton currMilkTile;
-
-    Random random = new Random();
-    Timer setMiceTimer;
-    Timer setMilkTimer;
-    int score = 0;
+    //Initalize fram, textlabels and panels for the game.
+    //JFrame is the main game window, it handles title bar, minimize/maximize/close buttons.
+    //JPanel is a space within the frame that holds other objects like panels, labels, buttons.
+    //JLabel is used to store text, images.
+    private final JFrame frame     = new JFrame("Project: Mice Hunt");
+    private final JLabel textLabel = new JLabel();
+    private final JPanel textPanel = new JPanel();
 
     MiceHunt() {
-        initialize();
+        setupFrame();
+        showStartScreen();
     }
 
-    public final void initialize(){ //Game Initializer
-        score = 0; //reset score
-        //stage = 0; //eventually reset stage
-        
-        //Standard Frame Setup
-
-	    frame.setSize(boardWidth, boardHeight);
+    //self explanatory:
+    private void setupFrame() {
+        frame.setSize(BOARD_WIDTH, BOARD_HEIGHT);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
-        
-        //Start Screen
-        startPanel.setLayout(new BorderLayout());
-        startPanel.setBackground(Color.black);
-
-        titleLabel.setText("MICE HUNT");
-        titleLabel.setForeground(Color.white);
-        titleLabel.setFont(new Font("Ariel", Font.BOLD, 60));
-        titleLabel.setHorizontalAlignment(JLabel.CENTER);
-        startPanel.add(titleLabel, BorderLayout.CENTER);
-
-        startButton.setFont(new Font ("Arial", Font.PLAIN, 40));
-        startButton.setHorizontalAlignment(JButton.CENTER);
-        startButton.setFocusable(false);
-        startPanel.add(startButton, BorderLayout.SOUTH);
-        
-
-        //preload game components (textLabel etc)
-        textLabel.setFont(new Font("Arial", Font.PLAIN, 50));
-        textLabel.setHorizontalAlignment(JLabel.CENTER);
-        textLabel.setText("Score: " + Integer.toString(score));
-        textLabel.setOpaque(true);
-
-        textPanel.setLayout(new BorderLayout());
-        textPanel.add(textLabel);		
-
-        boardPanel.setLayout(new GridLayout(6, 6));
-        
-        // milkIcon = new ImageIcon(getClass().getResource("./milk.jpg"));
-        Image milkImg = new ImageIcon(getClass().getResource("./milk.jpg")).getImage();
-        milkIcon = new ImageIcon(milkImg.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH));
-
-        Image miceImg = new ImageIcon(getClass().getResource("./mice.jpg")).getImage();
-        miceIcon = new ImageIcon(miceImg.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH));
-        
-        
-
-        //action listener for start Button, when clicked run Game
-        startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e){
-                runGame();
-            }
-        });
-        frame.add(startPanel);
-        frame.setVisible(true); //User can see frames
+        frame.setVisible(true);
     }
 
-    public final void runGame(){
-    frame.remove(startPanel);
+    private void showStartScreen() {
+        //Set up the startScreen Panel.
+        //layout management is set to BorderLayout i.e. 
+        // it follows the NORTH, SOUTH, EAST, WEST, CENTER positioning layout. 
+        JPanel startPanel = new JPanel(new BorderLayout());
+        startPanel.setBackground(Color.BLACK);
 
-    frame.add(textPanel, BorderLayout.NORTH);
-    frame.add(boardPanel);
-    
-    frame.revalidate();
-    frame.repaint();
+        //Initalize the titleLabel that contains the game name and set it's attributes.
+        //The 'MICE HUNT' will be displayed to the center of the screen.
+        JLabel titleLabel = new JLabel("MICE HUNT");
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 60));
+        titleLabel.setHorizontalAlignment(JLabel.CENTER);
+        //Add the titleLabel to the center of the startPanel.
+        startPanel.add(titleLabel, BorderLayout.CENTER);
 
-	for (int i = 0; i < tileSize; i++) {
-        JButton tile = new JButton();
-            board[i] = tile;
-            boardPanel.add(tile);
-            tile.setFocusable(false);
-            // tile.setIcon(milkIcon);
+        // Difficulty selection panel
+        //Crate a difficultyPanel that will hold three buttons 
+        //These buttons represent difficulty modes.
+        JPanel difficultyPanel = new JPanel(new GridLayout(1, 3));
+        JButton easyButton   = new JButton("Easy");
+        JButton mediumButton = new JButton("Medium");
+        JButton hardButton   = new JButton("Hard");
 
-            tile.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    JButton tile = (JButton) e.getSource();
-                    if (tile == currMiceTile) {
-                        score += 10;
-                        textLabel.setText("Score: " + Integer.toString(score));
-                    }
-                    else if (tile == currMilkTile) {
-		                textLabel.setText("Game Over: " + Integer.toString(score));
-                        setMiceTimer.stop();
-                        setMilkTimer.stop();
-                        for (int i = 0; i < tileSize; i++) {
-                            board[i].setEnabled(false);
-                        }
-                    }
-                }
-            });
-	}
+        //For every difficulty button,
+        //Make it irresponsive to the KeyBoard key presses.
+        //The buttons go in the order: EASY, MEDIUM, DIFFICULT to the difficultyPanel.
+        for (JButton btn : new JButton[]{easyButton, mediumButton, hardButton}) {
+            btn.setFont(new Font("Arial", Font.PLAIN, 28));
+            btn.setFocusable(false);
+            difficultyPanel.add(btn);
+        }
 
-        setMiceTimer = new Timer(500, new ActionListener() { //kept it 500 milliseconds for you guys to try
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //remove icon from current tile
-                if (currMiceTile != null) {
-                    currMiceTile.setIcon(null);
-                    currMiceTile = null;
-                }
+        //Add ActionListener to each diffculty Button and the function executed when the button is pressed.
+        //The funciton:
+        //Upon pressing one of the buttons, the frame removes the startPanel
+        //startGame(Difficulty difficulty) method will be called in the respective difficulty Mode.
+        easyButton.addActionListener(e   -> { frame.remove(startPanel); startGame(new Easy()); });
+        mediumButton.addActionListener(e -> { frame.remove(startPanel); startGame(new Medium()); });
+        hardButton.addActionListener(e   -> { frame.remove(startPanel); startGame(new Hard()); });
 
-                JButton tile;
-                do{
-                //randomly select another tile
-                int num = random.nextInt(tileSize); //0-8
-                tile = board[num];
+        //Add the difficulty panel to the bottom of the start panel(ie. bottom of the screen).
+        startPanel.add(difficultyPanel, BorderLayout.SOUTH);
 
-                //if tile is occupied by milk, place mice into different tile
-                } while(currMilkTile == tile);
-                //set tile to mice
-                currMiceTile = tile;
-                currMiceTile.setIcon(miceIcon);
-            }
-        });
+        //Add the startPanel to the main window frame.
+        frame.add(startPanel);
 
-        setMilkTimer = new Timer(1500, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //remove icon from current tile
-                if (currMilkTile != null) {
-                    currMilkTile.setIcon(null);
-                    currMilkTile = null;
-                }
+        //Since the structure of frame has changed, reevaludate the panel structure and draw it to the screen.
+        frame.revalidate();
+        frame.repaint();
+    }
 
-                JButton tile;
-                do{
-                //randomly select another tile
-                int num = random.nextInt(tileSize); //0-8
-                tile = board[num];
+    private void startGame(Difficulty difficulty) {
 
-                //if tile is occupied by mice, place milk into different tile
-                } while(currMiceTile == tile);
+        //Setting up the text label to display the current score in the game.
+        textLabel.setFont(new Font("Arial", Font.PLAIN, 50));
+        textLabel.setHorizontalAlignment(JLabel.CENTER);
+        textLabel.setText("Score: 0");
+        textLabel.setOpaque(true);  //makes the background(default in this case) color visible.
 
-                //set tile to mice
-                currMilkTile = tile;
-                currMilkTile.setIcon(milkIcon);
-            }
-        });
+        //Add the textlabel to the textPanel.
+        textPanel.setLayout(new BorderLayout());//Set the layout manager to BorderLayout.[N,S,E,W,C]
+        textPanel.add(textLabel);
 
-        setMiceTimer.start();
-        setMilkTimer.start();
-        frame.setVisible(true);
+        //initialize the gameState and the gameBoard
+        GameState gameState = new GameState();
+        GameBoard gameBoard = new GameBoard(gameState, textLabel, difficulty);
+
+        //Add the textPanel and the gameBoard.boardPanel to the frame.
+        frame.add(textPanel, BorderLayout.NORTH);
+        frame.add(gameBoard.boardPanel, BorderLayout.CENTER);
+        //Since the structure of frame has changed, reevaludate the panel structure and draw it to the screen.
+        frame.revalidate();
+        frame.repaint();
+
+        //This is what controls the actual gameplay:
+        gameBoard.startTimers();
     }
 }
