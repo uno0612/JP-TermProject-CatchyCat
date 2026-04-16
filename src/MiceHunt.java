@@ -14,13 +14,8 @@ public class MiceHunt {
     private final JLabel textLabel = new JLabel();
     private final JPanel textPanel = new JPanel();
 
-    MiceHunt() {
-        setupFrame();
-        showStartScreen();
-    }
-
     //self explanatory:
-    private void setupFrame() {
+    public void setupFrame() {
         frame.setSize(BOARD_WIDTH, BOARD_HEIGHT);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
@@ -29,7 +24,7 @@ public class MiceHunt {
         frame.setVisible(true);
     }
 
-    private void showStartScreen() {
+    public void showStartScreen() {
         //Set up the startScreen Panel.
         //layout management is set to BorderLayout i.e. 
         // it follows the NORTH, SOUTH, EAST, WEST, CENTER positioning layout. 
