@@ -15,6 +15,7 @@ public class GameBoard {
     //ImageIcons store(load) the images to be displayed by Swing(Java GUI widget toolkit).
     private ImageIcon miceIcon;
     private ImageIcon milkIcon;
+    private ImageIcon catIcon;
 
     //There were two time classes from javax.util and javax.swing
     //Thus we javax.swing.Timer specifies that we are using the Timer class from javax.swing
@@ -43,11 +44,14 @@ public class GameBoard {
         //We are loading the image first.
         //Our ImageIcon objects hold the scaled down image.
         //For both icons, we are loading the image, scaling it down and storing it in respective references.
-        Image milkImg = new ImageIcon(getClass().getResource("./milk.png")).getImage();
+        Image milkImg = new ImageIcon(getClass().getResource("./milk.jpg")).getImage();
         milkIcon = new ImageIcon(milkImg.getScaledInstance(150, 150, Image.SCALE_SMOOTH));
 
-        Image miceImg = new ImageIcon(getClass().getResource("./mice.png")).getImage();
+        Image miceImg = new ImageIcon(getClass().getResource("./mice.jpg")).getImage();
         miceIcon = new ImageIcon(miceImg.getScaledInstance(150, 150, Image.SCALE_SMOOTH));
+
+        Image catImg = new ImageIcon(getClass().getResource("./cat.jpg")).getImage();
+        catIcon = new ImageIcon(catImg.getScaledInstance(150, 150, Image.SCALE_SMOOTH));
     }
 
     private void setupBoard() {//Self Explanatory, isn't it? I will take you to details below:
@@ -74,15 +78,22 @@ public class GameBoard {
             //If it contains mouse, increase the current game score and remove mouse tile and icon.
             //If it contains milk, end the game.
             //else, do nothing, duh.. what do you expect?, the game goes on.
+            // + Must add cat on the tile landed (Easy since we just have to add image)
             tile.addActionListener(e -> {
                 if (gameState.isMiceTile(tile)) {
-                    gameState.incrementScore();
+                    tile.setIcon(null); //remove image from the tile
+                    gameState.getCurrMiceTiles().remove(tile); //remove interactive button from the tile
+                    gameState.incrementScore(); //+10 to Score
                     textLabel.setText("Score: " + gameState.getScore());
-                } else if (gameState.isMilkTile(tile)) {
-                    textLabel.setText("Game Over: " + gameState.getScore());
-                    stopTimers();
-                    for (JButton b : board) b.setEnabled(false);
+                } else if (gameState.isMilkTile(tile)) { //when touching milk cat
+                    gameEnd("Lose");
                 }
+                if(gameState.getCurrCatTile() != null){ //when cat tile is in specific position
+                    gameState.getCurrCatTile().setIcon(null); //remove cat icon from that position
+                }
+                tile.setIcon(catIcon); //add cat icon where user clicked
+                gameState.setCurrCatTiles(tile); //set current "tile" as cat tile
+                
             });
         }
     }
@@ -138,5 +149,17 @@ public class GameBoard {
     public void stopTimers() {
         if (setMiceTimer != null) setMiceTimer.stop();
         if (setMilkTimer != null) setMilkTimer.stop();
+    }
+
+    //Conditions when game has ended, status is either win or lose
+    public void gameEnd(String gameStatus){
+        if(gameStatus.equalsIgnoreCase("Win"))
+            textLabel.setText("You Win: " + gameState.getScore());
+        
+        else if(gameStatus.equalsIgnoreCase("Lose"))
+            textLabel.setText("Game Over: " + gameState.getScore());
+
+        stopTimers();
+        for (JButton b : board) b.setEnabled(false); //disable all tiles
     }
 }
