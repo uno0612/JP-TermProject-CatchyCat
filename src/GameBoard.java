@@ -136,9 +136,9 @@ public class GameBoard {
         while (picked.size() < count) {
             //pick a random tile from the board.
             JButton tile = board[random.nextInt(TILE_COUNT)];
-            //if this tile is not currenlty active tile(for display) and,
-            //has not been picked yet for the next slot, select it.
-            if (!occupied.contains(tile) && !picked.contains(tile)) {
+            //if this tile is not currenlty active tile(for display),
+            //has not been picked yet for the next slot, AND is not catTile select it.
+            if (!occupied.contains(tile) && !picked.contains(tile) &&!gameState.getCurrCatTile().equals(tile)) {
                 picked.add(tile);
             }
         }
