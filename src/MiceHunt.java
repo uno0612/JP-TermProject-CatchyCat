@@ -84,8 +84,9 @@ public class MiceHunt {
         textLabel.setText("Score: 0");
         textLabel.setOpaque(true);  //makes the background(default in this case) color visible.
 
+        //FlowLayout allows us to put Restart Button where there is space in the textPanel
+        textPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));//Set the layout manager to BorderLayout.[N,S,E,W,C]
         //Add the textlabel to the textPanel.
-        textPanel.setLayout(new BorderLayout());//Set the layout manager to BorderLayout.[N,S,E,W,C]
         textPanel.add(textLabel);
 
         //initialize the gameState and the gameBoard

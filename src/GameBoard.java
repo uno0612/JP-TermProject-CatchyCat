@@ -31,27 +31,48 @@ public class GameBoard {
     private final JLabel textLabel;
     private final Difficulty difficulty;//Difficulty level cannot be rereferenced either.
 
+    private JButton restartButton = new JButton("Restart"); // Create it once
 
     public GameBoard(GameState gameState, JLabel textLabel, Difficulty difficulty) {
         this.gameState  = gameState;
         this.textLabel  = textLabel;
         this.difficulty = difficulty;
+        
+        //restart button settings
+        restartButton.setFont(new Font("Arial", Font.BOLD, 26));
+        restartButton.setFocusable(false);
+        restartButton.setVisible(false); // Hide it initially
+        restartButton.addActionListener(e ->  { restartGame(); }); //when button clicked restart Game
+
+        // Add it to the panel where textLabel is
+        // This assumes the textLabel is already in a panel.
+        SwingUtilities.invokeLater(() -> {
+            //All panels are containers like all "Person" are Object
+            Container parent = textLabel.getParent(); //parent is actually textPanel from MiceHunt.java
+            if (parent != null) {
+                parent.add(restartButton);
+                parent.revalidate();
+                parent.repaint();
+            }
+        });
+
         loadIcons();
         setupBoard();
     }
 
     private void loadIcons() {
+        int size = 120;
         //We are loading the image first.
         //Our ImageIcon objects hold the scaled down image.
         //For both icons, we are loading the image, scaling it down and storing it in respective references.
         Image milkImg = new ImageIcon(getClass().getResource("./milk.jpg")).getImage();
-        milkIcon = new ImageIcon(milkImg.getScaledInstance(150, 150, Image.SCALE_SMOOTH));
+        milkIcon = new ImageIcon(milkImg.getScaledInstance(size, size, Image.SCALE_SMOOTH));
 
         Image miceImg = new ImageIcon(getClass().getResource("./mice.jpg")).getImage();
-        miceIcon = new ImageIcon(miceImg.getScaledInstance(150, 150, Image.SCALE_SMOOTH));
+        miceIcon = new ImageIcon(miceImg.getScaledInstance(size, size, Image.SCALE_SMOOTH));
 
         Image catImg = new ImageIcon(getClass().getResource("./cat.jpg")).getImage();
-        catIcon = new ImageIcon(catImg.getScaledInstance(150, 150, Image.SCALE_SMOOTH));
+        catIcon = new ImageIcon(catImg.getScaledInstance(size, size, Image.SCALE_SMOOTH));
     }
 
     private void setupBoard() {//Self Explanatory, isn't it? I will take you to details below:
@@ -92,7 +113,7 @@ public class GameBoard {
                     gameState.getCurrCatTile().setIcon(null); //remove cat icon from that position
                 }
                 tile.setIcon(catIcon); //add cat icon where user clicked
-                gameState.setCurrCatTiles(tile); //set current "tile" as cat tile
+                gameState.setCurrCatTiles(tile); //set current "tile" as cat tile position
                 
             });
         }
@@ -138,7 +159,7 @@ public class GameBoard {
             JButton tile = board[random.nextInt(TILE_COUNT)];
             //if this tile is not currenlty active tile(for display),
             //has not been picked yet for the next slot, AND is not catTile select it.
-            if (!occupied.contains(tile) && !picked.contains(tile) &&!gameState.getCurrCatTile().equals(tile)) {
+            if (!occupied.contains(tile) && !picked.contains(tile) && tile != gameState.getCurrCatTile()) {
                 picked.add(tile);
             }
         }
@@ -146,20 +167,39 @@ public class GameBoard {
     }
 
     //Stop the generation of the randomized appearance of mouse/milk once the game ends.
-    public void stopTimers() {
+    private void stopTimers() {
         if (setMiceTimer != null) setMiceTimer.stop();
         if (setMilkTimer != null) setMilkTimer.stop();
     }
 
     //Conditions when game has ended, status is either win or lose
-    public void gameEnd(String gameStatus){
+    private void gameEnd(String gameStatus){
         if(gameStatus.equalsIgnoreCase("Win"))
             textLabel.setText("You Win: " + gameState.getScore());
         
         else if(gameStatus.equalsIgnoreCase("Lose"))
             textLabel.setText("Game Over: " + gameState.getScore());
 
-        stopTimers();
+        stopTimers(); //stop all timers
         for (JButton b : board) b.setEnabled(false); //disable all tiles
+        restartButton.setVisible(true); //reveal hidden restart Button
+    }
+
+        private void restartGame() {
+        //
+        gameState.reset(); 
+        
+        // 2. Reset UI
+        textLabel.setText("Score: 0");
+        restartButton.setVisible(false); // Hide the button again
+        
+        for (JButton b : board) {
+            b.setEnabled(true);   // Re-enable buttons
+            b.setIcon(null);      // Clear images
+        }
+        
+        // 3. Restart Timers
+        startTimers();
     }
 }
+

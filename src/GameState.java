@@ -23,7 +23,7 @@ public class GameState {
     //Hashmap cost O(1) for lookups making tiles accessing effecient.
     private Set<JButton> currMiceTiles = new HashSet<>();
     private Set<JButton> currMilkTiles = new HashSet<>();
-    private JButton currCatTile = new JButton();
+    private JButton currCatTile = null; //cat position starts with null
 
     public void incrementScore() {
         score += SCORE_INCREMENT;
@@ -33,6 +33,7 @@ public class GameState {
         score = 0;
         currMiceTiles.clear();
         currMilkTiles.clear();
+        currCatTile = null;
     }
 
     //Checks if the tile clicked by the user is the mice tile or the milk tile.
