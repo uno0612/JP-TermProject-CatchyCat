@@ -6,4 +6,9 @@ public class Hard extends Difficulty {
         miceInterval = 600;
         milkInterval = 1000;
     }
+
+    @Override
+    public String getDifficultyLevel(){
+        return "hard";
+    }
 }

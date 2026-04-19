@@ -6,4 +6,9 @@ public class Medium extends Difficulty {
         miceInterval = 800;
         milkInterval = 1500;
     }
+
+    @Override
+    public String getDifficultyLevel(){
+        return "medium";
+    }
 }

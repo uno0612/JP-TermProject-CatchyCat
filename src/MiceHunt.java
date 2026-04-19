@@ -3,8 +3,8 @@ import javax.swing.*;
 
 public class MiceHunt {
     //Main window dimensions.
-    private static final int BOARD_WIDTH  = 600;
-    private static final int BOARD_HEIGHT = 650;
+    private static final int BOARD_WIDTH  = 770;
+    private static final int BOARD_HEIGHT = 800;
 
     //Initalize fram, textlabels and panels for the game.
     //JFrame is the main game window, it handles title bar, minimize/maximize/close buttons.
@@ -79,13 +79,15 @@ public class MiceHunt {
     private void startGame(Difficulty difficulty) {
 
         //Setting up the text label to display the current score in the game.
-        textLabel.setFont(new Font("Arial", Font.PLAIN, 50));
-        textLabel.setHorizontalAlignment(JLabel.CENTER);
+        textLabel.setFont(new Font("Arial", Font.PLAIN, 40));
+        textLabel.setHorizontalAlignment(JLabel.LEFT);
         textLabel.setText("Score: 0");
-        textLabel.setOpaque(true);  //makes the background(default in this case) color visible.
+        textLabel.setOpaque(false);  //label background invisible to show background of Panel below
+        textLabel.setPreferredSize(new Dimension(350, 65)); //height 65
 
         //FlowLayout allows us to put Restart Button where there is space in the textPanel
-        textPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));//Set the layout manager to BorderLayout.[N,S,E,W,C]
+        textPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 20));//Set the layout manager to FlowLayout
+        textPanel.setBackground(new Color(124, 253, 184)); //add a background for Panel
         //Add the textlabel to the textPanel.
         textPanel.add(textLabel);
 

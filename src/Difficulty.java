@@ -7,6 +7,7 @@ public abstract class Difficulty {
     protected int milkInterval;
 
     //Accessor methods.
+    public abstract String getDifficultyLevel();
     public int getMiceCount()    { return miceCount; }
     public int getMilkCount()    { return milkCount; }
     public int getMiceInterval() { return miceInterval; }

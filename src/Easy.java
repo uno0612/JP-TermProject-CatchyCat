@@ -6,4 +6,9 @@ public class Easy extends Difficulty {
         miceInterval = 1000;
         milkInterval = 2000;
     }
+
+    @Override
+    public String getDifficultyLevel(){
+        return "easy";
+    }
 }
