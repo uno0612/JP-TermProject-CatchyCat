@@ -1,6 +1,12 @@
 # JP-TermProject-Mice_Hunt
+
+### Project Members
 22300013 강운 (Un Kang), 22300835 김호훈(Hohun Kim), 22500373 Bibek Sunar
 
+### Youtube Link
+https://www.youtube.com/watch?v=gJPxMci9t5c
+
+### Description
 A mini game, Mice Hunt, is a simple aim and click game.
 You can choose difficulty easy, normal, hard.
 Click on tiles to move the cat.
